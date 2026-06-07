@@ -19,5 +19,26 @@
         "question": "The new marketing strategy was _______ successful than we expected.",
         "options": ["more", "most", "much", "many"],
         "answer": "more"
+    },
+    {
+        "id": 4,
+        "section": "Reading",
+        "question": "Mr. Kim was _______ for the promotion due to his exceptional sales record.",
+        "options": ["selected", "selection", "selects", "selective"],
+        "answer": "selected"
+    },
+    {
+        "id": 5,
+        "section": "Grammar",
+        "question": "If we _______ the contract today, the project can start tomorrow.",
+        "options": ["sign", "signed", "will sign", "signing"],
+        "answer": "sign"
+    },
+    {
+        "id": 6,
+        "section": "Vocabulary",
+        "question": "The company offers a very _______ salary package to attract top talent.",
+        "options": ["competitive", "competed", "competition", "competitively"],
+        "answer": "competitive"
     }
 ]
