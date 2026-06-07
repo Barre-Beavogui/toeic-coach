@@ -4,9 +4,22 @@ import pandas as pd
 import datetime
 import random
 import os
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # App configuration
 st.set_page_config(page_title="TOEIC Coach", page_icon="📈")
+
+# Gemini Setup
+api_key = os.getenv("GEMINI_API_KEY")
+if api_key:
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+else:
+    model = None
 
 # Paths
 DATA_DIR = "data"
@@ -16,6 +29,8 @@ QUIZ_FILE = os.path.join(DATA_DIR, "quiz.json")
 
 # Helper to load JSON
 def load_json(file_path):
+    if not os.path.exists(file_path):
+        return {"history": []} if "progress" in file_path else []
     with open(file_path, 'r') as f:
         return json.load(f)
 
@@ -23,6 +38,24 @@ def load_json(file_path):
 def save_json(file_path, data):
     with open(file_path, 'w') as f:
         json.dump(data, f, indent=4)
+
+# AI Coaching Function
+def get_ai_advice(history):
+    if not model:
+        return "Configurez votre GEMINI_API_KEY dans le fichier .env pour recevoir des conseils personnalisés."
+    
+    prompt = f"""
+    En tant que coach expert TOEIC, analyse mon historique de progression suivant :
+    {json.dumps(history[-5:])}
+    
+    Donne-moi 3 conseils précis pour m'améliorer, encourage-moi et suggère-moi un point de grammaire à réviser.
+    Sois concis et motivant.
+    """
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Erreur lors de la génération du conseil : {str(e)}"
 
 # Initialize Session State
 if 'current_page' not in st.session_state:
@@ -36,7 +69,7 @@ if 'show_translation' not in st.session_state:
 
 # Sidebar Navigation
 st.sidebar.title("TOEIC Coach")
-page = st.sidebar.radio("Navigation", ["Dashboard", "Quiz TOEIC", "Flashcards Vocabulaire"])
+page = st.sidebar.radio("Navigation", ["Dashboard", "Quiz TOEIC", "Flashcards Vocabulaire", "Coach IA Gemini"])
 st.session_state.current_page = page
 
 # --- Dashboard Section ---
@@ -71,6 +104,22 @@ if st.session_state.current_page == "Dashboard":
         st.subheader("Historique récent")
         st.dataframe(df.sort_values(by='date', ascending=False), use_container_width=True)
 
+# --- Coach IA Section ---
+elif st.session_state.current_page == "Coach IA Gemini":
+    st.title("🤖 Coach IA Gemini")
+    st.write("Analyse personnalisée de vos performances par l'IA.")
+    
+    progress_data = load_json(PROGRESS_FILE)
+    history = progress_data.get("history", [])
+    
+    if not history:
+        st.warning("Complétez au moins un quiz pour que l'IA puisse analyser vos performances.")
+    else:
+        if st.button("Obtenir mon analyse personnalisée"):
+            with st.spinner("Analyse en cours par Gemini..."):
+                advice = get_ai_advice(history)
+                st.markdown(f"### 💡 Conseils de votre Coach\n\n{advice}")
+                
 # --- Quiz TOEIC Section ---
 elif st.session_state.current_page == "Quiz TOEIC":
     st.title("✍️ Quiz TOEIC")
