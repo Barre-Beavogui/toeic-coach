@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "section": "Reading",
+        "question": "The manager decided to _______ the meeting until next Monday.",
+        "options": ["postpone", "cancel", "hold", "notify"],
+        "answer": "postpone"
+    },
+    {
+        "id": 2,
+        "section": "Reading",
+        "question": "Please ensure that all documents are signed _______ the end of the day.",
+        "options": ["at", "by", "in", "on"],
+        "answer": "by"
+    },
+    {
+        "id": 3,
+        "section": "Reading",
+        "question": "The new marketing strategy was _______ successful than we expected.",
+        "options": ["more", "most", "much", "many"],
+        "answer": "more"
+    }
+]
